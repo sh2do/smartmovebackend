@@ -5,18 +5,31 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# Install system dependencies required by some Python packages (e.g. psycopg2)
+# Install system dependencies required by some Python packages (e.g. psycopg2) and Node.js
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
 	   build-essential \
 	   gcc \
 	   libpq-dev \
+	   curl \
+	&& curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+	&& apt-get install -y nodejs \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 COPY requirements.txt ./
 COPY requirements-dev.txt ./
 RUN pip install --upgrade pip && pip install -r requirements.txt
+
+# Copy frontend source
+COPY smartmovefrontend/smartmove /app/smartmovefrontend/smartmove
+
+# Build frontend
+WORKDIR /app/smartmovefrontend/smartmove
+RUN npm install && npm run build
+
+# Return to app root
+WORKDIR /app
 
 # Copy application source (for builder if needed, but primarily for understanding context)
 COPY . /app
@@ -44,6 +57,9 @@ COPY requirements.txt .
 
 # Copy application source
 COPY . /app
+
+# Copy frontend build output from builder stage
+COPY --from=builder /app/build /app/build
 
 # Create a non-root user and adjust ownership
 RUN useradd -m appuser && chown -R appuser /app

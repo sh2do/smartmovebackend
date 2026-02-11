@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+# Build frontend if not already built
+if [ ! -d "build" ]; then
+    echo "Build directory not found. Building frontend..."
+    bash scripts/build_frontend.sh
+fi
+
 # Set Flask app for CLI commands
 export FLASK_APP=wsgi:app
 
