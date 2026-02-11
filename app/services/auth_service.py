@@ -46,5 +46,5 @@ class AuthService:
                 current_app.config['SECRET_KEY'],
                 algorithm='HS256'
             )
-            return token
-        raise Exception("Invalid email or password.")
+            return {'token': token, 'user': user.to_dict()}
+        raise ValueError("Invalid email or password.")

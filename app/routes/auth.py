@@ -20,7 +20,7 @@ def register():
 def login():
     data = request.get_json()
     try:
-        token = AuthService.login_user(data['email'], data['password'])        
-        return success({'token': token})        
+        response_data = AuthService.login_user(data['email'], data['password'])        
+        return success(response_data)
     except ValueError as e: # AuthService.login_user will raise ValueError for invalid credentials
         return error_response(str(e), 401)
