@@ -9,4 +9,4 @@ class Address(BaseModel):
     state = db.Column(db.String(100), nullable=False)
     zip_code = db.Column(db.String(20), nullable=False, index=True)
     
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), index=True)

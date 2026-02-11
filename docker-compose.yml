@@ -1,7 +1,10 @@
 services:
   web:
     build: .
-    command: gunicorn wsgi:app --config gunicorn.conf.py --log-level debug
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+    command: sh -c "/usr/local/bin/wait-for-db && gunicorn wsgi:app --config gunicorn.conf.py --log-level debug"
     ports:
       - "8000:8000"
     env_file:
@@ -29,11 +32,13 @@ services:
 
   worker:
     build: .
-    command: celery -A celery_app:celery_app worker --loglevel=info
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - PYTHONPATH=/app
+    command: sh -c "/usr/local/bin/wait-for-db && celery -A celery_app:celery_app worker --loglevel=info"
     env_file:
       - .env
-    environment:
-      - PYTHONPATH=/app
     restart: always # Ensure the service restarts if it crashes
     depends_on:
       - redis

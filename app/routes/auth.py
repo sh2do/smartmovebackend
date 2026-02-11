@@ -11,16 +11,16 @@ def register():
     data = request.get_json()
     try:
         user = AuthService.register_user(data)
-        return success(user.to_dict(), 201)
-    except Exception as e:
-        return error_response(str(e))
+        return success(user.to_dict(), 201)    
+    except ValueError as e: # Catch specific validation errors if AuthService raises them
+        return error_response(str(e), 400)
 
 @auth_bp.route('/login', methods=['POST'])
 @validate_request('email', 'password')
 def login():
     data = request.get_json()
     try:
-        token = AuthService.login_user(data['email'], data['password'])
-        return success({'token': token})
-    except Exception as e:
+        token = AuthService.login_user(data['email'], data['password'])        
+        return success({'token': token})        
+    except ValueError as e: # AuthService.login_user will raise ValueError for invalid credentials
         return error_response(str(e), 401)

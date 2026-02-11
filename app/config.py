@@ -19,7 +19,9 @@ def get_database_uri():
 
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or '5ead1ae258577a4829d2b623d0497f1e14b0dbb260147424'
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+    if SECRET_KEY is None:
+        raise ValueError("SECRET_KEY environment variable not set. Please set it for production readiness.")
 
     SQLALCHEMY_DATABASE_URI = get_database_uri()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -36,4 +38,11 @@ class Config:
     MPESA_SHORTCODE = os.environ.get('MPESA_SHORTCODE')
     MPESA_PASSKEY = os.environ.get('MPESA_PASSKEY')
     CALLBACK_URL = os.environ.get('CALLBACK_URL')
+
+    # Google Maps Configuration
+    GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY')
+
+    # Validate critical MPESA configurations
+    if any(v is None for v in [MPESA_BASE_URL, MPESA_CONSUMER_KEY, MPESA_CONSUMER_SECRET, MPESA_SHORTCODE, MPESA_PASSKEY, CALLBACK_URL, GOOGLE_MAPS_API_KEY]):
+        raise ValueError("One or more critical API environment variables are not set. Please check MPESA and GOOGLE_MAPS configurations.")
 

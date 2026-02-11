@@ -17,11 +17,11 @@ class BookingStatus(enum.Enum):
 class Booking(BaseModel):
     __tablename__ = 'bookings'
 
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    mover_id = db.Column(db.Integer, db.ForeignKey('movers.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    mover_id = db.Column(db.Integer, db.ForeignKey('movers.id'), nullable=False, index=True)
     
-    pickup_address_id = db.Column(db.Integer, db.ForeignKey('addresses.id'), nullable=False)
-    dropoff_address_id = db.Column(db.Integer, db.ForeignKey('addresses.id'), nullable=False)
+    pickup_address_id = db.Column(db.Integer, db.ForeignKey('addresses.id'), nullable=False, index=True)
+    dropoff_address_id = db.Column(db.Integer, db.ForeignKey('addresses.id'), nullable=False, index=True)
     
     booking_time = db.Column(db.DateTime(timezone=True), nullable=False, index=True)
     status = db.Column(db.Enum(BookingStatus), default=BookingStatus.PENDING, nullable=False, index=True)
@@ -31,8 +31,8 @@ class Booking(BaseModel):
     payment_status = db.Column(db.Enum(PaymentStatus), default=PaymentStatus.PENDING, nullable=False)
     checkout_request_id = db.Column(db.String(50), nullable=True, index=True)
     
-    user = db.relationship('User', backref='bookings')
-    mover = db.relationship('Mover', backref='bookings')
+    user = db.relationship('User', backref=db.backref('bookings', lazy='subquery'), lazy='joined')
+    mover = db.relationship('Mover', backref=db.backref('bookings', lazy='subquery'), lazy='joined')
     
-    pickup_address = db.relationship('Address', foreign_keys=[pickup_address_id])
-    dropoff_address = db.relationship('Address', foreign_keys=[dropoff_address_id])
+    pickup_address = db.relationship('Address', foreign_keys=[pickup_address_id], lazy='joined')
+    dropoff_address = db.relationship('Address', foreign_keys=[dropoff_address_id], lazy='joined')

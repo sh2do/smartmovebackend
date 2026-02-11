@@ -19,6 +19,9 @@ RUN apt-get update \
 # Install Python dependencies
 COPY requirements.txt ./
 COPY requirements-dev.txt ./
+# Copy wait-for-db script and make it executable
+COPY wait-for-db.py /usr/local/bin/wait-for-db
+RUN chmod +x /usr/local/bin/wait-for-db
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Copy frontend source
@@ -53,6 +56,8 @@ COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/pytho
 COPY --from=builder /usr/local/bin/gunicorn /usr/local/bin/gunicorn
 COPY --from=builder /usr/local/bin/celery /usr/local/bin/celery
 COPY --from=builder /usr/local/bin/flask /usr/local/bin/flask
+# Copy the wait-for-db script from the builder stage
+COPY --from=builder /usr/local/bin/wait-for-db /usr/local/bin/wait-for-db
 COPY requirements.txt .
 
 # Copy application source

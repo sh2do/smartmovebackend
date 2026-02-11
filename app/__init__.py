@@ -48,26 +48,38 @@ def create_app(config_class=Config):
         # Development: Allow requests from Vite dev server
         cors.init_app(app, resources={
             r"/api/*": {
-                "origins": ["http://localhost:5173", "http://127.0.0.1:5173"],
+                "origins": ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:5174", "http://127.0.0.1:5174"],
                 "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
                 "allow_headers": ["Content-Type", "Authorization"],
                 "supports_credentials": True
             }
         })
-        app.logger.info("CORS configured for development mode with origins: localhost:5173, 127.0.0.1:5173")
+        app.logger.info("CORS configured for development mode with origins: localhost:5173, localhost:5174, 127.0.0.1:5173, 127.0.0.1:5174")
     else:
         # Production: Allow same-origin or specific production origins
         # In production with merged deployment, CORS is not strictly needed (same-origin)
         # but we configure it to allow flexibility for future CDN or subdomain usage
-        cors.init_app(app, resources={
-            r"/api/*": {
-                "origins": "*",
-                "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-                "allow_headers": ["Content-Type", "Authorization"],
-                "supports_credentials": False
-            }
-        })
-        app.logger.info("CORS configured for production mode")
+        # Production: Use explicit origins from env var, fallback to safe default or disable
+        production_origins_str = os.environ.get('CORS_ORIGINS')
+        production_origins = production_origins_str.split(',') if production_origins_str else [] # If not set, default to empty list (no origins)
+        
+        # NOTE: If your frontend is served from the same domain as the backend,
+        # CORS might not be strictly needed for API calls. If different domains,
+        # ensure CORS_ORIGINS environment variable is set to a comma-separated list of trusted frontend URLs.
+        if production_origins:
+            cors.init_app(app, resources={
+                r"/api/*": {
+                    "origins": production_origins,
+                    "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+                    "allow_headers": ["Content-Type", "Authorization"],
+                    "supports_credentials": False
+                }
+            })
+            app.logger.info(f"CORS configured for production mode with origins: {production_origins}")
+        else:
+            app.logger.info("CORS not explicitly configured for production mode (no CORS_ORIGINS env var found), relying on same-origin policy or default browser behavior.")
+            # Optionally, you could still initialize CORS with specific non-wildcard settings here
+            # or raise an error if CORS_ORIGINS is critical for this setup.
     
     bcrypt.init_app(app)
 
@@ -201,6 +213,10 @@ def create_app(config_class=Config):
         Returns:
             The index.html file or 404 if static folder doesn't exist
         """
+        # Skip API routes - let them 404 naturally if not found
+        if path.startswith('api/'):
+            return jsonify({"error": "API endpoint not found"}), 404
+        
         # Check if the path corresponds to a static file
         if path and os.path.exists(os.path.join(app.static_folder, path)):
             return app.send_static_file(path)

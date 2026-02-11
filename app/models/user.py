@@ -10,6 +10,8 @@ class UserRole(enum.Enum):
 class User(BaseModel):
     __tablename__ = 'users'
 
+    first_name = db.Column(db.String(100), nullable=True) # Making nullable=True for existing users
+    last_name = db.Column(db.String(100), nullable=True)  # Making nullable=True for existing users
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128))
     role = db.Column(db.Enum(UserRole), default=UserRole.CUSTOMER, nullable=False, index=True)

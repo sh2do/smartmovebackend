@@ -20,5 +20,10 @@ from app import create_app
 app = create_app()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    flask_env = os.environ.get('FLASK_ENV', 'development')
+    if flask_env == 'production':
+        print("WARNING: Running with Flask development server in production environment. This is NOT recommended. Debugging is forced OFF.", file=sys.stderr)
+        app.run(host='0.0.0.0', port=5001, debug=False) # Force debug=False
+    else:
+        app.run(host='0.0.0.0', port=5001, debug=True)
 

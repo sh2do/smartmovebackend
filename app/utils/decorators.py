@@ -18,13 +18,14 @@ def jwt_required(f):
             return error_response("Authentication Token is missing!", 401)
 
         try:
-            current_app.logger.debug(f"SECRET_KEY used for decode: {current_app.config.get('SECRET_KEY')}")
-            payload = jwt.decode(token, os.environ.get('SECRET_KEY').encode('utf-8'), algorithms=["HS256"]) # Use os.environ directly for SECRET_KEY
+            current_app.logger.debug("SECRET_KEY retrieved from config for JWT decoding.")
+            payload = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
             user_id = payload['sub'] # CORRECTED: Use 'sub' instead of 'user_id'
             user = User.query.get(user_id)
             if not user:
                 return error_response("User not found!", 401)
             g.current_user = user # Store the whole user object in g
+            kwargs['current_user'] = user # Pass current_user to the decorated function
         except jwt.ExpiredSignatureError:
             return error_response("Token is expired!", 401)
         except jwt.InvalidTokenError:
