@@ -16,6 +16,14 @@ def test_app():
         SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
         SQLALCHEMY_TRACK_MODIFICATIONS = False
         SECRET_KEY = 'test_secret_key' # Needed for JWT/Bcrypt
+        # Dummy M-Pesa configuration for testing
+        MPESA_BASE_URL = 'http://test.mpesa.url'
+        MPESA_CONSUMER_KEY = 'test_key'
+        MPESA_CONSUMER_SECRET = 'test_secret'
+        MPESA_SHORTCODE = '600000'
+        MPESA_PASSKEY = 'test_passkey'
+        CALLBACK_URL = 'http://test.callback.url' # Changed key name
+        MPESA_CALLBACK_URL = 'http://test.callback.url'
 
     app = create_app(TestConfig)
 

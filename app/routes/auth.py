@@ -6,7 +6,7 @@ from app.utils.validators import validate_request
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @auth_bp.route('/register', methods=['POST'])
-@validate_request('email', 'password', 'role')
+@validate_request('email', 'password')
 def register():
     data = request.get_json()
     try:

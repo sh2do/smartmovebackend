@@ -8,7 +8,7 @@ class Review(BaseModel):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     mover_id = db.Column(db.Integer, db.ForeignKey('movers.id'), nullable=False)
     
-    rating = db.Column(db.Integer, nullable=False)
+    rating = db.Column(db.Integer, nullable=False, index=True)
     comment = db.Column(db.Text)
     
     booking = db.relationship('Booking', backref='review')

@@ -23,3 +23,131 @@
  * Restarting with stat
  * Debugger is active!
  * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/app/__init__.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/app/models/user.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/app/models/address.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/app/models/booking.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/app/models/chat.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/app/models/mover.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/app/models/notification.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/app/models/quote.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/app/models/review.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/app/routes/auth.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/app/utils/decorators.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/app/utils/decorators.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/app/services/auth_service.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/app/utils/decorators.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/app/__init__.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/app/services/auth_service.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/app/utils/decorators.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/app/services/auth_service.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/app/utils/decorators.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/app/services/auth_service.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/tests/test_payments.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/tests/test_services/test_auth_service.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/tests/test_payments.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/tests/test_services/test_auth_service.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/tests/conftest.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/tests/test_services/test_auth_service.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/tests/conftest.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/tests/test_services/test_auth_service.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/tests/conftest.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/tests/test_payments.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 138-023-318
+ * Detected change in '/Users/jeffthanduru/projects/smartmovebackend/app/__init__.py', reloading
+ * Restarting with stat
+Traceback (most recent call last):
+  File "/Users/jeffthanduru/projects/smartmovebackend/run.py", line 1, in <module>
+    from app import create_app
+  File "/Users/jeffthanduru/projects/smartmovebackend/app/__init__.py", line 15, in <module>
+    from app.models.chat import Chat
+ImportError: cannot import name 'Chat' from 'app.models.chat' (/Users/jeffthanduru/projects/smartmovebackend/app/models/chat.py)

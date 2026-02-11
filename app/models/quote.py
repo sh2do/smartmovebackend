@@ -19,7 +19,7 @@ class Quote(BaseModel):
     distance_meters = db.Column(db.Integer, nullable=False)
     volume_cubic_meters = db.Column(db.Float, nullable=False)
     price = db.Column(db.Float, nullable=False)
-    status = db.Column(db.Enum(QuoteStatus), default=QuoteStatus.PENDING, nullable=False)
+    status = db.Column(db.Enum(QuoteStatus), default=QuoteStatus.PENDING, nullable=False, index=True)
 
     user = db.relationship('User', backref='quotes')
     mover = db.relationship('Mover', backref='quotes')

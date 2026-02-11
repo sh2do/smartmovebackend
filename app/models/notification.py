@@ -6,7 +6,7 @@ class Notification(BaseModel):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     message = db.Column(db.String(255), nullable=False)
-    read = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    read = db.Column(db.Boolean, default=False, index=True)
+    created_at = db.Column(db.DateTime, server_default=db.func.now(), index=True)
     
     user = db.relationship('User', backref='notifications')

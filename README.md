@@ -2,6 +2,18 @@
 
 This is the backend service for the SmartMove application, built with Flask.
 
+## Quick Start: Running the Backend
+
+To run the Flask application for local development:
+
+```bash
+python run.py
+```
+To run this in the background and continue using your terminal:
+```bash
+python run.py &
+```
+
 ## Table of Contents
 
 -   [Features](#features)

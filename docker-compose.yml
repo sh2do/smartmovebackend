@@ -1,9 +1,7 @@
-version: '3.8'
-
 services:
   web:
     build: .
-    command: gunicorn wsgi:app --config gunicorn.conf.py
+    command: gunicorn wsgi:app --config gunicorn.conf.py --log-level debug
     ports:
       - "8000:8000"
     env_file:
@@ -40,6 +38,16 @@ services:
     depends_on:
       - redis
       - db
+
+  test:
+    build: .
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - .:/app
 
 volumes:
   postgres_data:

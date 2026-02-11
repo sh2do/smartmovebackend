@@ -7,6 +7,6 @@ class Address(BaseModel):
     street = db.Column(db.String(255), nullable=False)
     city = db.Column(db.String(100), nullable=False)
     state = db.Column(db.String(100), nullable=False)
-    zip_code = db.Column(db.String(20), nullable=False)
+    zip_code = db.Column(db.String(20), nullable=False, index=True)
     
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))

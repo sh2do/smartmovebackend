@@ -12,7 +12,7 @@ class User(BaseModel):
 
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128))
-    role = db.Column(db.Enum(UserRole), default=UserRole.CUSTOMER, nullable=False)
+    role = db.Column(db.Enum(UserRole), default=UserRole.CUSTOMER, nullable=False, index=True)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 

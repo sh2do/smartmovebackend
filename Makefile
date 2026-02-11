@@ -22,9 +22,8 @@ logs:
 	docker-compose logs -f
 
 test:
-	@echo "Running tests in web container..."
-	docker-compose exec web pytest
-
+	@echo "Running tests in test service..."
+	docker-compose run --rm test /bin/sh -c "pip install -r requirements-dev.txt && echo \\$PATH && ls -l /usr/local/bin && python -m pytest"
 shell:
 	@echo "Opening shell in web container..."
 	docker-compose exec web /bin/sh

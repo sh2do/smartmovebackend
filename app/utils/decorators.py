@@ -3,6 +3,7 @@ from functools import wraps
 from flask import request, current_app, g
 from app.utils.response import error_response
 from app.models.user import User, UserRole
+import os # Import os
 
 def jwt_required(f):
     @wraps(f)
@@ -17,8 +18,9 @@ def jwt_required(f):
             return error_response("Authentication Token is missing!", 401)
 
         try:
-            payload = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
-            user_id = payload['user_id']
+            current_app.logger.debug(f"SECRET_KEY used for decode: {current_app.config.get('SECRET_KEY')}")
+            payload = jwt.decode(token, os.environ.get('SECRET_KEY').encode('utf-8'), algorithms=["HS256"]) # Use os.environ directly for SECRET_KEY
+            user_id = payload['sub'] # CORRECTED: Use 'sub' instead of 'user_id'
             user = User.query.get(user_id)
             if not user:
                 return error_response("User not found!", 401)
@@ -28,7 +30,8 @@ def jwt_required(f):
         except jwt.InvalidTokenError:
             return error_response("Token is invalid!", 401)
         except KeyError:
-            return error_response("Token is missing user_id!", 401)
+            # If 'sub' is missing, it's also an invalid token
+            return error_response("Token is missing user ID!", 401)
 
         return f(*args, **kwargs)
     return decorated_function

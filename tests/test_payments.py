@@ -11,26 +11,7 @@ from app.services.mpesa_service import MpesaService
 from datetime import datetime
 
 
-@pytest.fixture
-def client():
-    app = create_app()
-    app.config['TESTING'] = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:' # Use in-memory SQLite for tests
 
-    with app.test_client() as client:
-        with app.app_context():
-            db.create_all()
-            # Import and register the payments blueprint
-            from app.routes.payments import payment_bp
-            app.register_blueprint(payment_bp, url_prefix='/payments')
-            # Create a test user
-            user = User(email='test@example.com')
-            user.set_password('password')
-            db.session.add(user)
-            db.session.commit()
-            yield client
-            db.session.remove()
-            db.drop_all()
 
 @pytest.fixture
 def auth_headers(client):
@@ -43,7 +24,7 @@ def auth_headers(client):
     return {'Authorization': 'Bearer dummy-token'}
 
 @pytest.fixture
-def setup_booking():
+def setup_booking(init_database):
     user = User(email='booking@example.com')
     user.set_password('password')
     mover_user = User(email='mover@example.com')
@@ -126,11 +107,12 @@ def test_initiate_payment_success(mock_stk_push, client, auth_headers, setup_boo
     }
     
     booking = setup_booking
-    response = client.post('/payments/stk-push', json={
-        'phone': '254712345678',
-        'amount': 100.00,
-        'booking_id': booking.id
-    }, headers=auth_headers)
+    with client.application.app_context():
+        response = client.post('/payments/stk-push', json={
+            'phone': '254712345678',
+            'amount': 100.00,
+            'booking_id': booking.id
+        }, headers=auth_headers)
     
     assert response.status_code == 200
     assert response.json['message'] == 'STK Push Initiated Successfully'
@@ -141,11 +123,12 @@ def test_initiate_payment_success(mock_stk_push, client, auth_headers, setup_boo
 
 @patch('app.routes.payments.MpesaService.stk_push')
 def test_initiate_payment_missing_fields(mock_stk_push, client, auth_headers):
-    response = client.post('/payments/stk-push', json={
-        'phone': '254712345678',
-        'amount': 100.00
-        # Missing booking_id
-    }, headers=auth_headers)
+    with client.application.app_context():
+        response = client.post('/payments/stk-push', json={
+            'phone': '254712345678',
+            'amount': 100.00
+            # Missing booking_id
+        }, headers=auth_headers)
     
     assert response.status_code == 400
     assert response.json['message'] == 'Missing required fields: phone, amount, booking_id'
@@ -153,11 +136,12 @@ def test_initiate_payment_missing_fields(mock_stk_push, client, auth_headers):
 
 @patch('app.routes.payments.MpesaService.stk_push')
 def test_initiate_payment_booking_not_found(mock_stk_push, client, auth_headers):
-    response = client.post('/payments/stk-push', json={
-        'phone': '254712345678',
-        'amount': 100.00,
-        'booking_id': 999 # Non-existent booking ID
-    }, headers=auth_headers)
+    with client.application.app_context():
+        response = client.post('/payments/stk-push', json={
+            'phone': '254712345678',
+            'amount': 100.00,
+            'booking_id': 999 # Non-existent booking ID
+        }, headers=auth_headers)
     
     assert response.status_code == 404
     assert response.json['message'] == 'Booking not found'
@@ -171,11 +155,12 @@ def test_initiate_payment_stk_push_failure(mock_stk_push, client, auth_headers, 
     }
     
     booking = setup_booking
-    response = client.post('/payments/stk-push', json={
-        'phone': '254712345678',
-        'amount': 100.00,
-        'booking_id': booking.id
-    }, headers=auth_headers)
+    with client.application.app_context():
+        response = client.post('/payments/stk-push', json={
+            'phone': '254712345678',
+            'amount': 100.00,
+            'booking_id': booking.id
+        }, headers=auth_headers)
     
     assert response.status_code == 400
     assert response.json['message'] == 'STK Push Initiation Failed'
@@ -209,7 +194,8 @@ def test_payment_callback_success(client, setup_booking):
         }
     }
     
-    response = client.post('/payments/callback', json=callback_data)
+    with client.application.app_context():
+        response = client.post('/payments/callback', json=callback_data)
     
     assert response.status_code == 200
     assert response.json['message'] == 'Callback processed'
@@ -235,7 +221,8 @@ def test_payment_callback_failure(client, setup_booking):
         }
     }
     
-    response = client.post('/payments/callback', json=callback_data)
+    with client.application.app_context():
+        response = client.post('/payments/callback', json=callback_data)
     
     assert response.status_code == 200
     assert response.json['message'] == 'Callback processed'
@@ -264,7 +251,8 @@ def test_payment_callback_booking_not_found(client):
         }
     }
     
-    response = client.post('/payments/callback', json=callback_data)
+    with client.application.app_context():
+        response = client.post('/payments/callback', json=callback_data)
     
     assert response.status_code == 200
     assert response.json['message'] == 'Callback processed'
