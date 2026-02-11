@@ -45,16 +45,17 @@ def create_app(config_class=Config):
     # Configure CORS based on environment
     flask_env = os.environ.get('FLASK_ENV', 'production')
     if flask_env == 'development':
+        development_origins_str = os.environ.get('CORS_ORIGINS', "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174").split(',')
         # Development: Allow requests from Vite dev server
         cors.init_app(app, resources={
             r"/api/*": {
-                "origins": ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:5174", "http://127.0.0.1:5174"],
+                "origins": development_origins_str,
                 "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
                 "allow_headers": ["Content-Type", "Authorization"],
                 "supports_credentials": True
             }
         })
-        app.logger.info("CORS configured for development mode with origins: localhost:5173, localhost:5174, 127.0.0.1:5173, 127.0.0.1:5174")
+        app.logger.info(f"CORS configured for development mode with origins: {development_origins_str}")
     else:
         # Production: Allow same-origin or specific production origins
         # In production with merged deployment, CORS is not strictly needed (same-origin)
