@@ -43,6 +43,6 @@ class Config:
     GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY')
 
     # Validate critical MPESA configurations
-    if any(v is None for v in [MPESA_BASE_URL, MPESA_CONSUMER_KEY, MPESA_CONSUMER_SECRET, MPESA_SHORTCODE, MPESA_PASSKEY, CALLBACK_URL, GOOGLE_MAPS_API_KEY]):
+    if any(not v for v in [MPESA_BASE_URL, MPESA_CONSUMER_KEY, MPESA_CONSUMER_SECRET, MPESA_SHORTCODE, MPESA_PASSKEY, CALLBACK_URL, GOOGLE_MAPS_API_KEY]):
         raise ValueError("One or more critical API environment variables are not set. Please check MPESA and GOOGLE_MAPS configurations.")
 
