@@ -1,4 +1,4 @@
-from flask import Blueprint, request, current_app
+from flask import Blueprint, request, current_app, g # Import g
 from app.utils.response import success, error_response
 from app.utils.decorators import jwt_required
 from app.services.chat_service import ChatService # Import ChatService
@@ -8,10 +8,11 @@ chat_bp = Blueprint('chat', __name__, url_prefix='/chats')
 
 @chat_bp.route('', methods=['POST'])
 @jwt_required
-def create_chat_session(current_user):
+def create_chat_session():
     """
     Starts a new chat session.
     """
+    current_user = g.current_user
     data = request.get_json()
     if not data or 'recipient_id' not in data:
         return error_response("Recipient ID is required.", 400)
@@ -33,10 +34,11 @@ def create_chat_session(current_user):
 
 @chat_bp.route('/<string:chat_session_id>/messages', methods=['POST'])
 @jwt_required
-def send_message(current_user, chat_session_id):
+def send_message(chat_session_id):
     """
     Sends a message within a chat session.
     """
+    current_user = g.current_user
     data = request.get_json()
     
     if not data or 'message_body' not in data:

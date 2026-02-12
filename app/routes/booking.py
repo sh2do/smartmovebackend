@@ -1,4 +1,4 @@
-from flask import Blueprint, request, current_app # Import current_app
+from flask import Blueprint, request, current_app, g # Import g
 from app.services.booking_service import BookingService
 from app.utils.response import success, error_response
 from app.utils.decorators import jwt_required
@@ -10,7 +10,8 @@ booking_bp = Blueprint('booking', __name__, url_prefix='/bookings')
 @booking_bp.route('', methods=['POST'])
 @jwt_required
 @validate_request('pickup_address', 'dropoff_address', 'booking_time')
-def create_booking(current_user):
+def create_booking():
+    current_user = g.current_user
     data = request.get_json()
     try:
         booking = BookingService.create_booking(current_user, data)
@@ -26,7 +27,8 @@ def create_booking(current_user):
 
 @booking_bp.route('/<int:booking_id>', methods=['GET'])
 @jwt_required
-def get_booking(current_user, booking_id):
+def get_booking(booking_id):
+    current_user = g.current_user
     try:
         booking = BookingService.get_booking_by_id(booking_id, current_user)
         return success(booking.to_dict())

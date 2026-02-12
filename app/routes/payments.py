@@ -1,4 +1,4 @@
-from flask import Blueprint, request, current_app
+from flask import Blueprint, request, current_app, g
 from app.services.mpesa_service import MpesaService
 from app.utils.response import success, error_response as error
 from app.models.booking import Booking, PaymentStatus # Import Booking and PaymentStatus
@@ -13,7 +13,8 @@ payment_bp = Blueprint("payments", __name__)
 
 @payment_bp.route("/stk-push", methods=["POST"])
 @jwt_required
-def initiate_payment(current_user): # current_user is passed by jwt_required
+def initiate_payment():
+    current_user = g.current_user # current_user is passed by jwt_required
     data = request.get_json()
     phone = data.get("phone")
     amount = data.get("amount")

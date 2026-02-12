@@ -1,4 +1,4 @@
-from flask import Blueprint, request, current_app # Import current_app
+from flask import Blueprint, request, current_app, g # Import g
 from app.utils.response import success, error_response
 from app.utils.decorators import jwt_required
 from app.utils.validators import validate_request
@@ -9,10 +9,11 @@ inventory_bp = Blueprint('inventory', __name__, url_prefix='/inventory')
 
 @inventory_bp.route('', methods=['GET'])
 @jwt_required
-def get_user_inventory(current_user):
+def get_user_inventory():
     """
     Retrieves the inventory for the current user.
     """
+    current_user = g.current_user
     try:
         user_inventory = InventoryService.get_user_inventory(current_user)
         return success([item.to_dict() for item in user_inventory])
@@ -24,10 +25,11 @@ def get_user_inventory(current_user):
 @inventory_bp.route('', methods=['POST'])
 @jwt_required
 @validate_request('name', 'quantity', 'booking_id') # Added booking_id to validate_request
-def add_inventory_item(current_user):
+def add_inventory_item():
     """
     Adds an item to the user's inventory.
     """
+    current_user = g.current_user
     data = request.get_json()
     
     try:

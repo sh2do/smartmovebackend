@@ -83,6 +83,8 @@ def create_app(config_class=Config):
             # or raise an error if CORS_ORIGINS is critical for this setup.
     
     bcrypt.init_app(app)
+    from app.extensions import jwt # Import jwt here
+    jwt.init_app(app)
 
     # Register blueprints
     from app.routes.auth import auth_bp

@@ -1,73 +1,57 @@
-import jwt
 from functools import wraps
 from flask import request, current_app, g
 from app.utils.response import error_response
 from app.models.user import User, UserRole
-import os # Import os
+from flask_jwt_extended import jwt_required as jwt_required_flask_jwt, get_jwt_identity, get_jwt
 
 def jwt_required(f):
     @wraps(f)
+    @jwt_required_flask_jwt() # Use the decorator from flask_jwt_extended
     def decorated_function(*args, **kwargs):
-        token = None
-        if 'Authorization' in request.headers:
-            auth_header = request.headers['Authorization']
-            if auth_header.startswith('Bearer '):
-                token = auth_header.split(' ')[1]
-
-        if not token:
-            return error_response("Authentication Token is missing!", 401)
-
-        try:
-            current_app.logger.debug("SECRET_KEY retrieved from config for JWT decoding.")
-            payload = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
-            user_id = payload['sub']
-            user = User.query.get(user_id)
-            if not user:
-                return error_response("User not found!", 401)
-            g.current_user = user # Store the whole user object in g
-            kwargs['current_user'] = user # Pass current_user to the decorated function
-        except jwt.ExpiredSignatureError:
-            return error_response("Token is expired!", 401)
-        except jwt.InvalidTokenError:
-            return error_response("Token is invalid!", 401)
-        except KeyError:
-            # If 'sub' is missing, it's also an invalid token
-            return error_response("Token is missing user ID!", 401)
-
+        # Get the identity of the current user, which is the user_id
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        if not user:
+            # This should ideally not happen if the token is valid and user exists
+            return error_response("User not found or token invalid.", 401)
+        
+        g.current_user = user # Store the user object in Flask's global context
+        # You might not need to pass it as kwargs['current_user'] anymore if routes access g.current_user
+        # kwargs['current_user'] = user 
+        
         return f(*args, **kwargs)
     return decorated_function
 
 def roles_required(*roles):
     def decorator(f):
         @wraps(f)
+        @jwt_required_flask_jwt() # Ensure JWT is present and valid
         def decorated_function(*args, **kwargs):
-            # This decorator should be stacked AFTER @jwt_required
-            if not hasattr(g, 'current_user'):
-                return error_response("Authentication required.", 401)
+            claims = get_jwt()
+            user_role = claims.get('role')
+            user_id = get_jwt_identity() # Get user_id to fetch user object
             
-            user = g.current_user
-            # .value gets the string representation of the enum, e.g., 'customer'
-            if user.role.value not in roles:
+            user = User.query.get(user_id)
+            if not user or user_role not in roles:
                 return error_response("User does not have the required permissions.", 403)
-
-            # Pass the user object to the decorated function
-            kwargs['current_user'] = user
+            
+            g.current_user = user # Ensure user object is available
             return f(*args, **kwargs)
         return decorated_function
     return decorator
 
 def admin_required(f):
     @wraps(f)
+    @jwt_required_flask_jwt() # Ensure JWT is present and valid
     def decorated_function(*args, **kwargs):
-        # This decorator should be stacked AFTER @jwt_required
-        if not hasattr(g, 'current_user'):
-            return error_response("Authentication required. Use @jwt_required before @admin_required.", 401)
-        
-        user = g.current_user
-        if user.role != UserRole.ADMIN:
+        claims = get_jwt()
+        user_role = claims.get('role')
+        user_id = get_jwt_identity() # Get user_id to fetch user object
+
+        user = User.query.get(user_id)
+        if not user or user_role != UserRole.ADMIN.value:
             return error_response("Administrator access required.", 403)
         
-        # Pass the user object to the decorated function
-        kwargs['current_user'] = user
+        g.current_user = user # Ensure user object is available
         return f(*args, **kwargs)
     return decorated_function

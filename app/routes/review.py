@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, g # Import g
 from app.models.review import Review
 from app.utils.response import success, error_response
 from app.utils.decorators import jwt_required
@@ -9,7 +9,8 @@ review_bp = Blueprint('review', __name__, url_prefix='/reviews')
 @review_bp.route('', methods=['POST'])
 @jwt_required
 @validate_request('booking_id', 'rating', 'comment')
-def create_review(current_user):
+def create_review():
+    current_user = g.current_user
     data = request.get_json()
     data['user_id'] = current_user.id
     try:

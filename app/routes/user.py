@@ -1,4 +1,4 @@
-from flask import Blueprint, request, current_app
+from flask import Blueprint, request, current_app, g
 from app.models.user import User # Import User model for validation
 from app.utils.response import success, error_response
 from app.utils.decorators import jwt_required
@@ -7,12 +7,14 @@ user_bp = Blueprint('user', __name__, url_prefix='/users')
 
 @user_bp.route('/profile', methods=['GET'])
 @jwt_required
-def get_profile(current_user):
+def get_profile():
+    current_user = g.current_user
     return success(current_user.to_dict())
 
 @user_bp.route('/profile', methods=['PUT'])
 @jwt_required
-def update_profile(current_user):
+def update_profile():
+    current_user = g.current_user
     data = request.get_json()    
     try:
         # Whitelist allowed fields for update.

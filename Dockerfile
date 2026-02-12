@@ -5,29 +5,20 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# Install system dependencies required by some Python packages (e.g. psycopg2) and Node.js
+# Install system dependencies required by some Python packages (e.g. psycopg2)
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
 	   build-essential \
 	   gcc \
 	   libpq-dev \
-	   curl \
-	&& curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-	&& apt-get install -y nodejs \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 COPY requirements.txt ./
-COPY requirements-dev.txt ./
 # Copy wait-for-db script and make it executable
 COPY wait-for-db.py /usr/local/bin/wait-for-db
 RUN chmod +x /usr/local/bin/wait-for-db
 RUN pip install --upgrade pip && pip install -r requirements.txt
-
-# Copy frontend source
-
-
-# Build frontend
 
 # Return to app root
 WORKDIR /app
@@ -60,9 +51,6 @@ COPY requirements.txt .
 
 # Copy application source
 COPY . /app
-
-# Copy frontend build output from builder stage
-COPY --from=builder /app/build /app/build
 
 # Create a non-root user and adjust ownership
 RUN useradd -m appuser && chown -R appuser /app
