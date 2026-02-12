@@ -51,7 +51,7 @@ def init_database(test_app):
     with test_app.app_context():
         db.drop_all()
         db.create_all()
-        yield db
+        yield db.session
         db.session.remove()
         db.drop_all()
 
@@ -62,9 +62,12 @@ def sample_user(init_database):
     """
     user = User(email='test@example.com', role=UserRole.CUSTOMER)
     user.set_password('password123')
-    init_database.session.add(user)
-    init_database.session.commit()
-    return user
+    init_database.add(user) # Use session directly
+    init_database.commit()  # Use session directly
+    # Explicitly fetch the user again to ensure it's loaded into the session
+    # that subsequent queries will use.
+    reloaded_user = User.query.filter_by(email='test@example.com').first()
+    return reloaded_user
 
 @pytest.fixture(scope='session')
 def app(test_app):

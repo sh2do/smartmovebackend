@@ -14,14 +14,21 @@ from datetime import datetime
 
 
 @pytest.fixture
-def auth_headers(client):
-    # Assuming there's a login route and it returns a token
-    # This is a placeholder, you might need to adapt it based on your actual auth implementation
-    # For now, we'll assume a user is logged in
-    # In a real scenario, you'd make a POST request to your login endpoint
-    # and extract the token from the response.
-    # For simplicity, let's just return a dummy header for now
-    return {'Authorization': 'Bearer dummy-token'}
+def auth_headers(client, sample_user): # Use sample_user fixture
+    with client.application.app_context():
+        print(f"DEBUG: sample_user in auth_headers: {sample_user}")
+        retrieved_user_in_fixture = User.query.get(sample_user.id)
+        print(f"DEBUG: retrieved_user_in_fixture: {retrieved_user_in_fixture}")
+        assert retrieved_user_in_fixture is not None # Ensure user is found here
+        # Log in the sample user to get a real token
+        login_data = {
+            'email': sample_user.email,
+            'password': 'password123' # Use the password used to create sample_user
+        }
+        response = client.post('/api/auth/login', json=login_data)
+        assert response.status_code == 200
+        token = response.json['data']['token']
+        return {'Authorization': f'Bearer {token}'}
 
 @pytest.fixture
 def setup_booking(init_database):
@@ -67,8 +74,8 @@ def test_get_token_success(mock_get, client): # Add client fixture
 def test_get_token_failure(mock_get, client): # Add client fixture
     with client.application.app_context(): # Wrap in app context
         mock_get.return_value.json.return_value = {'error': 'failed'}
-        token = MpesaService.get_token()
-        assert token is None
+        with pytest.raises(ValueError, match="Mpesa API did not return an access token."):
+            MpesaService.get_token()
 
 @patch('app.services.mpesa_service.requests.post')
 @patch('app.services.mpesa_service.MpesaService.get_token', return_value='test_token')
@@ -108,7 +115,7 @@ def test_initiate_payment_success(mock_stk_push, client, auth_headers, setup_boo
     
     booking = setup_booking
     with client.application.app_context():
-        response = client.post('/payments/stk-push', json={
+        response = client.post('/api/payments/stk-push', json={
             'phone': '254712345678',
             'amount': 100.00,
             'booking_id': booking.id
@@ -124,7 +131,7 @@ def test_initiate_payment_success(mock_stk_push, client, auth_headers, setup_boo
 @patch('app.routes.payments.MpesaService.stk_push')
 def test_initiate_payment_missing_fields(mock_stk_push, client, auth_headers):
     with client.application.app_context():
-        response = client.post('/payments/stk-push', json={
+        response = client.post('/api/payments/stk-push', json={
             'phone': '254712345678',
             'amount': 100.00
             # Missing booking_id
@@ -137,7 +144,7 @@ def test_initiate_payment_missing_fields(mock_stk_push, client, auth_headers):
 @patch('app.routes.payments.MpesaService.stk_push')
 def test_initiate_payment_booking_not_found(mock_stk_push, client, auth_headers):
     with client.application.app_context():
-        response = client.post('/payments/stk-push', json={
+        response = client.post('/api/payments/stk-push', json={
             'phone': '254712345678',
             'amount': 100.00,
             'booking_id': 999 # Non-existent booking ID
@@ -156,7 +163,7 @@ def test_initiate_payment_stk_push_failure(mock_stk_push, client, auth_headers, 
     
     booking = setup_booking
     with client.application.app_context():
-        response = client.post('/payments/stk-push', json={
+        response = client.post('/api/payments/stk-push', json={
             'phone': '254712345678',
             'amount': 100.00,
             'booking_id': booking.id
@@ -195,7 +202,7 @@ def test_payment_callback_success(client, setup_booking):
     }
     
     with client.application.app_context():
-        response = client.post('/payments/callback', json=callback_data)
+        response = client.post('/api/payments/callback', json=callback_data)
     
     assert response.status_code == 200
     assert response.json['message'] == 'Callback processed'
@@ -222,7 +229,7 @@ def test_payment_callback_failure(client, setup_booking):
     }
     
     with client.application.app_context():
-        response = client.post('/payments/callback', json=callback_data)
+        response = client.post('/api/payments/callback', json=callback_data)
     
     assert response.status_code == 200
     assert response.json['message'] == 'Callback processed'
@@ -252,7 +259,7 @@ def test_payment_callback_booking_not_found(client):
     }
     
     with client.application.app_context():
-        response = client.post('/payments/callback', json=callback_data)
+        response = client.post('/api/payments/callback', json=callback_data)
     
     assert response.status_code == 200
     assert response.json['message'] == 'Callback processed'

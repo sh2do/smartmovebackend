@@ -20,7 +20,7 @@ def jwt_required(f):
         try:
             current_app.logger.debug("SECRET_KEY retrieved from config for JWT decoding.")
             payload = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
-            user_id = payload['sub'] # CORRECTED: Use 'sub' instead of 'user_id'
+            user_id = payload['sub']
             user = User.query.get(user_id)
             if not user:
                 return error_response("User not found!", 401)

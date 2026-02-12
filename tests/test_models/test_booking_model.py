@@ -43,6 +43,7 @@ def test_booking_creation(init_database):
         status=BookingStatus.PENDING
     )
     new_booking.save()
+    init_database.session.commit()
 
     # 3. Assertions
     assert new_booking.id is not None

@@ -64,6 +64,7 @@ def test_user_save_and_delete(init_database):
     user = User(email='temp@example.com', role=UserRole.CUSTOMER)
     user.set_password('temp_pass')
     user.save() # Uses BaseModel save method
+    init_database.session.commit()
     assert user.id is not None
 
     user_from_db = init_database.session.get(User, user.id)
@@ -71,5 +72,6 @@ def test_user_save_and_delete(init_database):
     assert user_from_db.email == 'temp@example.com'
 
     user.delete() # Uses BaseModel delete method
+    init_database.session.commit()
     user_after_delete = init_database.session.get(User, user.id)
     assert user_after_delete is None

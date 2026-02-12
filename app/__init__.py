@@ -45,7 +45,7 @@ def create_app(config_class=Config):
     # Configure CORS based on environment
     flask_env = os.environ.get('FLASK_ENV', 'production')
     if flask_env == 'development':
-        development_origins_str = os.environ.get('CORS_ORIGINS', "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174").split(',')
+        development_origins_str = os.environ.get('CORS_ORIGINS', "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174,http://localhost:5175,http://127.0.0.1:5175").split(',')
         # Development: Allow requests from Vite dev server
         cors.init_app(app, resources={
             r"/api/*": {
