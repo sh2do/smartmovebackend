@@ -25,11 +25,9 @@ RUN chmod +x /usr/local/bin/wait-for-db
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Copy frontend source
-COPY smartmovefrontend/smartmove /app/smartmovefrontend/smartmove
+
 
 # Build frontend
-WORKDIR /app/smartmovefrontend/smartmove
-RUN npm install && npm run build
 
 # Return to app root
 WORKDIR /app
